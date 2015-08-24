@@ -3,15 +3,16 @@ function plasma(canvas) {
 	var ctx;
 
 	this.init = function () {
-		width = canvas.offsetWidth;
-		height = canvas.offsetHeight;
+		width = 100;
+		height = 100;
 
 		ctx = canvas.getContext('2d');
+		canvas.width = 100;
+		canvas.height = 100;
 
 		this.points = this.getPoints(width, height);
 
 		this.draw();
-		console.log('again');
 	};
 
 	this.getPoints = function (w, h) {
@@ -40,7 +41,7 @@ function plasma(canvas) {
 		var nw = ~~(w / 2);
 		var nh = ~~(h / 2);
 
-		if (nw > 1 || nh > 1) {
+		if (nw > 1 && nh > 1) {
 			var np1 = this.norm(p1 / 2 + p2 / 2);
 			var np2 = this.norm(p2 / 2 + p3 / 2);
 			var np3 = this.norm(p3 / 2 + p4 / 2);
@@ -53,6 +54,7 @@ function plasma(canvas) {
 			this.split(p, x, y + nh, nw, h - nh, np4, center, np3, p4);
 			this.split(p, x + nw, y + nh, w - nw, h - nh, center, np2, p3, np3);
 		} else {
+			console.log(x, y);
 			p[x][y] = (p1 + p2 + p3 + p4) / 4;			
 		}
 	};
@@ -108,7 +110,7 @@ function plasma(canvas) {
 		};
 	};
 
-	this.init();
+	setInterval(this.init.bind(this), 2);
 }
 
 new plasma(document.getElementById('viewport'));
