@@ -11,6 +11,7 @@ function plasma(canvas) {
 		this.points = this.getPoints(width, height);
 
 		this.draw();
+		console.log('again');
 	};
 
 	this.getPoints = function (w, h) {
@@ -20,12 +21,16 @@ function plasma(canvas) {
 			points[i] = [];
 		}
 
-		var p1 = Math.random();
-		var p2 = Math.random();
-		var p3 = Math.random();
-		var p4 = Math.random();
+		var p1 = (Math.random());
+		var p2 = (Math.random());
+		var p3 = (Math.random());
+		var p4 = (Math.random());
+
+		console.log(p1, p2, p3, p4);
 
 		this.split(points, 0, 0, width, height, p1, p2, p3, p4);
+
+		console.dir(points);
 
 		return points;
 	};
@@ -35,7 +40,7 @@ function plasma(canvas) {
 		var nw = ~~(w / 2);
 		var nh = ~~(h / 2);
 
-		if (nw > 1 && nh > 1) {
+		if (nw > 1 || nh > 1) {
 			var np1 = this.norm(p1 / 2 + p2 / 2);
 			var np2 = this.norm(p2 / 2 + p3 / 2);
 			var np3 = this.norm(p3 / 2 + p4 / 2);
@@ -45,10 +50,10 @@ function plasma(canvas) {
 
 			this.split(p, x, y, nw, nh, p1, np1, center, np4);
 			this.split(p, x + nw, y, w - nw, nh, np1, p2, np2, center);
-			this.split(p, x, y + nh, nw, h, h - nh, center, np3, p4);
+			this.split(p, x, y + nh, nw, h - nh, np4, center, np3, p4);
 			this.split(p, x + nw, y + nh, w - nw, h - nh, center, np2, p3, np3);
 		} else {
-			p[x][y] = center;			
+			p[x][y] = (p1 + p2 + p3 + p4) / 4;			
 		}
 	};
 
@@ -57,7 +62,7 @@ function plasma(canvas) {
 	};
 
 	this.shift = function (nw, nh) {
-		return Math.random() * (nw + nh) / (width + height);
+		return (0.5 - Math.random()) * (nw + nh) / (width + height) * 0.8;
 	};
 
 	this.draw = function () {
@@ -67,36 +72,35 @@ function plasma(canvas) {
 		for (var i = 0; i < width; i++) {
 			for (var j = 0; j < height; j++) {
 				color = this.getColor(this.points[i][j]);
-				ctx.fillStyle = 'rgb(' + color.r + ',' + color.g + ',' + color.b + ')';
+				var style = 'rgb(' + color.r + ',' + color.g + ',' + color.b + ')';
+				ctx.fillStyle = style;
+				// console.log(style);
 				ctx.fillRect(i, j, 1, 1);
 			}
 		}
 	};
 
-	this.getColor = function (v) {
+	this.getColor = function (c) {
 		var r, g, b;
 
-		if (v < 0.5) {
-			r = v + 0.2;
-		} else {
-			r = Math.random() * 0.1 + 0.1;
-			r = r > 1 ? 1 : r;
-		}
+		if (c < 0.5)
+					r = c * 2;
+				else
+					r = (1.0 - c) * 2;
 
-		if (v < 0.4) {
-			g = v + Math.random() * 0.3;
-		} else {
-			g = Math.random * 0.3 + 0.4;
-			g = g > 1 ? 1 : g;
-		}
+				//g
+				if (c >= 0.3 && c < 0.8)
+					g = (c - 0.3) * 2;
+				else if (c < 0.3)
+					g = (0.3 - c) * 2;
+				else
+					g = (1.3 - c) * 2;
 
-		if (v < 0.4) {
-			b = v + Math.random() * 0.4;
-		} else {
-			b = Math.random * 0.1 + 0.3;
-			b = b > 1 ? 1 : b;
-		}
-
+				//b
+				if (c >= 0.5)
+					b = (c - 0.5) * 2;
+				else
+					b = (0.5 - c) * 2;
 		return {
 			r: ~~(255 * r),
 			g: ~~(255 * g),
